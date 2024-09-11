@@ -3,7 +3,7 @@ Pintos is a simple operating system framework for the 80x86 architecture. It sup
 
 ## How to install and run pintos?
 
-We will use `qemu` to run pintos. To begin with, install qemu on you system:
+We will use `qemu` to run pintos. To begin with, install qemu on your system:
 
 ### Install QEMU
 For ubuntu: `sudo apt-get install qemu-system`
