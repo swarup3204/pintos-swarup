@@ -10,7 +10,8 @@ For ubuntu: `sudo apt-get install qemu-system`
 
 For others, follow the instructions [here](https://www.qemu.org/download/).
 
-After installing qemu create a symlink for the command qemu: `sudo ln -s /bin/qemu-system-i386 /bin/qemu` \
+After installing qemu create a symlink for the command qemu: \
+`sudo ln -s /bin/qemu-system-i386 /bin/qemu` \
 or \
 `sudo ln -s /bin/qemu-system-x86_64 /bin/qemu`
 
