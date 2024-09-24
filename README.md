@@ -2,6 +2,7 @@
 Pintos is a simple operating system framework for the 80x86 architecture. It support kernel threads, loading and running user programs, and a file system. To learn more refer to the [manual](http://web.stanford.edu/class/cs140/projects/pintos/pintos.html).
 
 ## How to install and run pintos?
+Clone this repo
 
 We will use `qemu` to run pintos. To begin with, install qemu on your system:
 
