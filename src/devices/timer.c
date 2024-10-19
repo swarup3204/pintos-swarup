@@ -94,6 +94,7 @@ void timer_sleep(int64_t ticks)
 
   /* my code begins */
   thread_sleep(ticks); // put thread to sleep for avoid very busy waiting
+  thread_block();
   /* my code ends */
 }
 
@@ -165,6 +166,7 @@ static void
 timer_interrupt(struct intr_frame *args UNUSED)
 {
   ticks++;
+  thread_wake();
   thread_tick();
 }
 

@@ -170,10 +170,10 @@ void thread_sleep(int64_t sleepticks)
   if (current != idle_thread)
   {
     current->sleep_ticks = timer_ticks() + sleepticks;
-    current->status = THREAD_BLOCKED;
+    // current->status = THREAD_BLOCKED;
     list_insert_ordered(&block_list, &current->elem, thread_compare, NULL);
+    // thread_block();
   }
-
   // restore interrupt level
   intr_set_level(old_level);
 }
