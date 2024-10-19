@@ -173,6 +173,9 @@ void thread_sleep(int64_t sleepticks)
     current->status = THREAD_BLOCKED;
     list_insert_ordered(&block_list, &current->elem, thread_compare, NULL);
   }
+
+  // restore interrupt level
+  intr_set_level(old_level);
 }
 
 // wake up non-busy threads
