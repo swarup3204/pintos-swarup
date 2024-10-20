@@ -95,6 +95,8 @@ void thread_init(void)
   lock_init(&tid_lock);
   list_init(&ready_list);
   list_init(&all_list);
+  list_init(&block_list);
+  printf("Init done");
 
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread();
@@ -170,10 +172,11 @@ void thread_sleep(int64_t sleepticks)
   if (current != idle_thread)
   {
     current->sleep_ticks = timer_ticks() + sleepticks;
-    // current->status = THREAD_BLOCKED;
     list_insert_ordered(&block_list, &current->elem, thread_compare, NULL);
-    // thread_block();
+    thread_block();
   }
+
+  // printf("Put thread %lld to sleep\n", current->tid);
   // restore interrupt level
   intr_set_level(old_level);
 }
