@@ -113,6 +113,8 @@ void thread_start(void)
   struct semaphore idle_started;
   sema_init(&idle_started, 0);
   thread_create("idle", PRI_MIN, idle, &idle_started);
+  // create a wakeup thread with max priority
+  thread_create("wakeup", PRI_MAX, thread_wake, NULL);
 
   /* Start preemptive thread scheduling. */
   intr_enable();
@@ -186,22 +188,32 @@ void thread_wake()
 {
   struct list_elem *n, *m;
   enum intr_level old_level;
-  old_level = intr_disable();
   struct thread *th;
-  for (n = list_begin(&block_list); n != list_end(&block_list);)
+  // implementing busy wait for the thread wakeup
+  while (1)
   {
-    th = list_entry(n, struct thread, elem);
-    if (timer_ticks() >= th->sleep_ticks)
+    old_level = intr_disable();
+    if (list_empty(&block_list))
     {
-      m = list_remove(n);
-      th = list_entry(n, struct thread, elem);
-      thread_unblock(th);
-      n = m;
+      intr_set_level(old_level);
+      continue;
     }
-    else
-      break;
+    for (n = list_begin(&block_list); n != list_end(&block_list);)
+    {
+      th = list_entry(n, struct thread, elem);
+      if (timer_ticks() >= th->sleep_ticks)
+      {
+        m = list_remove(n);
+        th = list_entry(n, struct thread, elem);
+        thread_unblock(th);
+        n = m;
+      }
+      else
+        break;
+    }
+    intr_set_level(old_level);
+    thread_yield();
   }
-  intr_set_level(old_level);
 }
 /* my code ends */
 
