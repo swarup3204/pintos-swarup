@@ -28,13 +28,16 @@ static struct list ready_list;
    when they are first scheduled and removed when they exit. */
 static struct list all_list;
 
-static struct list block_list;
+static struct list block_list; // list of sleepers
 
 /* Idle thread. */
 static struct thread *idle_thread;
 
 /* Initial thread, the thread running init.c:main(). */
 static struct thread *initial_thread;
+
+/* Wakeup thread structure*/
+static struct thread *wakeup_thread;
 
 /* Lock used by allocate_tid(). */
 static struct lock tid_lock;
@@ -127,6 +130,18 @@ void thread_start(void)
    Thus, this function runs in an external interrupt context. */
 void thread_tick(void)
 {
+
+  /* first check if any thread in sleeping list can be woken*/
+  /* get first entry of block_list and check if timer_ticks greater than that*/
+  if (!list_empty(&block_list))
+  {
+    struct thread *t = list_entry(list_begin(&block_list), struct thread, elem);
+    if (timer_ticks() >= t->sleep_ticks)
+    {
+      thread_unblock(wakeup_thread);
+    }
+  }
+
   struct thread *t = thread_current();
 
   /* Update statistics. */
@@ -189,6 +204,7 @@ void thread_wake()
   struct list_elem *n, *m;
   enum intr_level old_level;
   struct thread *th;
+  wakeup_thread = thread_current();
   // implementing busy wait for the thread wakeup
   while (1)
   {
@@ -211,8 +227,8 @@ void thread_wake()
       else
         break;
     }
+    thread_block();
     intr_set_level(old_level);
-    thread_yield();
   }
 }
 /* my code ends */
